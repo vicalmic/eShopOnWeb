@@ -1,0 +1,32 @@
+services:
+  eshopwebmvc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:8080
+    build:
+      context: .
+      dockerfile: src/Web/Dockerfile
+    ports:
+      - "5106:8080"
+    depends_on:
+      - sqlserver
+  eshoppublicapi:
+    build:
+      context: .
+      dockerfile: src/PublicApi/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5200:8080"
+    depends_on: 
+      - sqlserver
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "@someThingComplicated1234"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+volumes:
+  sqlserver_data:
